@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2026-05-12 19:43:32">
+<sysauto_script action="INSERT_OR_UPDATE">
+<active>true</active>
+<advanced>true</advanced>
+<business_calendar display_value=""/>
+<condition/>
+<conditional>false</conditional>
+<entered_run_end/>
+<entered_run_start/>
+<entered_time>1970-01-01 00:00:00</entered_time>
+<max_drift/>
+<name>ThreatServer-HealthCheck</name>
+<offset/>
+<offset_type>0</offset_type>
+<repeat_every/>
+<run_as display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</run_as>
+<run_as_tz/>
+<run_dayofmonth>1</run_dayofmonth>
+<run_dayofweek>1</run_dayofweek>
+<run_daysofweek/>
+<run_end/>
+<run_month>1</run_month>
+<run_period>1970-01-01 00:05:00</run_period>
+<run_start/>
+<run_time>1970-01-01 08:00:00</run_time>
+<run_type>periodically</run_type>
+<run_weekinmonth>1</run_weekinmonth>
+<script><![CDATA[(function() {
+
+    try {
+
+        var rm = new sn_ws.RESTMessageV2(
+            'ThreatServer-HealthCheck',
+            'Health Check'
+        );
+
+        var response = rm.execute();
+
+        var status = response.getStatusCode();
+        var body = response.getBody();
+
+        gs.info(
+            '[ThreatServer-HealthCheck] Status: ' +
+            status +
+            ' Response: ' +
+            body
+        );
+
+    } catch (ex) {
+
+        gs.error(
+            '[ThreatServer-HealthCheck] Error: ' +
+            ex.message
+        );
+    }
+
+})();]]></script>
+<sys_class_name>sysauto_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-05-12 18:51:58</sys_created_on>
+<sys_id>0679e6fd933c4310071ff2cfdd03d66b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>ThreatServer-HealthCheck</sys_name>
+<sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
+<sys_policy/>
+<sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
+<sys_update_name>sysauto_script_0679e6fd933c4310071ff2cfdd03d66b</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-05-12 18:51:58</sys_updated_on>
+<time_zone>floating</time_zone>
+<upgrade_safe>false</upgrade_safe>
+</sysauto_script>
+</unload>
