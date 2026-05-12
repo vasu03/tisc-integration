@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="63e136f193bc4310071ff2cfdd03d623" label="Inbound Configurations" max_length="40" name="x_1893179_tisc_i_0_inbound_configurations" type="collection">
+        <element label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="Last Successful Run" max_length="40" name="last_successful_run" type="glide_date_time"/>
+        <element choice="3" default="fetch_observables" label="Type" max_length="255" name="type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Enrich Observables" sequence="1" value="enrich_observables"/>
+                <element inactive_on_update="false" label="Fetch Observables" sequence="0" value="fetch_observables"/>
+            </choice>
+        </element>
+        <element default="1" label="Import Frequency (in Days)" max_length="255" name="import_frequency" type="integer"/>
+        <element label="Name" max_length="100" name="name" type="string"/>
+        <element label="Next Run" max_length="40" name="next_run" type="glide_date_time"/>
+        <element label="Next Offset" max_length="100" name="next_offset" type="string"/>
+        <element label="API Credential" max_length="32" name="api_credential" reference="x_1893179_tisc_i_0_api_credentials" type="reference"/>
+        <index name="index">
+            <element name="api_credential"/>
+        </index>
+    </element>
+</database>

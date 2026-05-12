@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="6953bab593bc4310071ff2cfdd03d6f7" label="Process Monitor" max_length="40" name="x_1893179_tisc_i_0_process_monitor" type="collection">
+        <element choice="3" default="inbound" label="Operation" max_length="255" name="operation" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Inbound" sequence="0" value="inbound"/>
+            </choice>
+        </element>
+        <element label="Start Time" max_length="40" name="start_time" type="glide_date_time"/>
+        <element choice="3" label="Status" max_length="40" name="status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Complete" sequence="1" value="complete"/>
+                <element inactive_on_update="false" label="In Progress" sequence="0" value="in_progress"/>
+                <element inactive_on_update="false" label="Failed" sequence="2" value="failed"/>
+            </choice>
+        </element>
+        <element choice="3" label="Operation Category" max_length="40" name="operation_category" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Fetch Observables" sequence="0" value="fetch_observables"/>
+                <element inactive_on_update="false" label="Enrich Observables" sequence="1" value="enrich_observables"/>
+            </choice>
+        </element>
+        <element label="Message" max_length="10000" name="message" type="string"/>
+        <element label="Configuration" max_length="32" name="configuration" reference="x_1893179_tisc_i_0_inbound_configurations" type="reference"/>
+        <element label="End Time" max_length="40" name="end_time" type="glide_date_time"/>
+        <index name="index">
+            <element name="configuration"/>
+        </index>
+    </element>
+</database>

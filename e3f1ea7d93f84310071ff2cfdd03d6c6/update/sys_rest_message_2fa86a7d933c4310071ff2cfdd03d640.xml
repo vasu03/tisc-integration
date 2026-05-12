@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message">
+    <sys_rest_message action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <authentication_type>no_authentication</authentication_type>
+        <basic_auth_password/>
+        <basic_auth_profile/>
+        <basic_auth_user/>
+        <description/>
+        <name>ThreatServer-HealthCheck</name>
+        <oauth2_profile/>
+        <protocol_name/>
+        <rest_endpoint>https://tisc-server.onrender.com/health</rest_endpoint>
+        <sys_class_name>sys_rest_message</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-12 18:46:47</sys_created_on>
+        <sys_id>2fa86a7d933c4310071ff2cfdd03d640</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>ThreatServer-HealthCheck</sys_name>
+        <sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
+        <sys_update_name>sys_rest_message_2fa86a7d933c4310071ff2cfdd03d640</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-12 18:46:47</sys_updated_on>
+        <use_basic_auth>false</use_basic_auth>
+        <use_mutual_auth>false</use_mutual_auth>
+    </sys_rest_message>
+</record_update>
