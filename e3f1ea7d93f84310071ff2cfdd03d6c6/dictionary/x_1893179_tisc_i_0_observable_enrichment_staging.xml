@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="19a3178293f40710071ff2cfdd03d653" label="Observable Enrichment Staging" max_length="40" name="x_1893179_tisc_i_0_observable_enrichment_staging" type="collection">
+        <element label="Raw Payload" max_length="10000" name="raw_payload" type="string"/>
+        <element label="Observable ID" max_length="100" name="observable_id" type="string"/>
+        <element label="Observable Value" max_length="500" name="observable_value" type="string"/>
+        <element label="Process Monitor" max_length="32" name="process_monitor" reference="x_1893179_tisc_i_0_process_monitor" type="reference"/>
+        <element label="Processed" max_length="40" name="processed" type="boolean"/>
+        <element choice="3" default="pending" label="Processing Status" max_length="255" name="processing_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Failed" sequence="2" value="failed"/>
+                <element inactive_on_update="false" label="Processed" sequence="1" value="processed"/>
+                <element inactive_on_update="false" label="Pending" sequence="0" value="pending"/>
+            </choice>
+        </element>
+        <element label="Source" max_length="200" name="source" type="string"/>
+        <element label="Observable Type" max_length="150" name="observable_type" type="string"/>
+        <element label="Error Message" max_length="10000" name="error_message" type="string"/>
+        <element label="Fetch Time" max_length="40" name="fetch_time" type="glide_date_time"/>
+        <index name="index">
+            <element name="process_monitor"/>
+        </index>
+    </element>
+</database>

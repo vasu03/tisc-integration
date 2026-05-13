@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="2186df0a93f40710071ff2cfdd03d65a" label="Observable Enrichment" max_length="40" name="x_1893179_tisc_i_0_observable_enrichment" type="collection">
+        <element label="First Seen" max_length="40" name="first_seen" type="glide_date_time"/>
+        <element label="Malware" max_length="150" name="malware" type="string"/>
+        <element label="Raw Payload" max_length="10000" name="raw_payload" type="string"/>
+        <element label="Threat Level" max_length="100" name="threat_level" type="string"/>
+        <element label="Tags" max_length="1000" name="tags" type="string"/>
+        <element label="Last Enriched" max_length="40" name="last_enriched" type="glide_date_time"/>
+        <element label="Criticality" max_length="40" name="criticality" type="integer"/>
+        <element label="Threat Score" max_length="40" name="threat_score" type="integer"/>
+        <element label="Malware Printable" max_length="150" name="malware_printable" type="string"/>
+        <element label="Confidence" max_length="40" name="confidence" type="integer"/>
+        <element label="Last Seen" max_length="40" name="last_seen" type="glide_date_time"/>
+        <element label="Reputation" max_length="100" name="reputation" type="string"/>
+        <element label="Description" max_length="1000" name="description" type="string"/>
+        <element label="Additional Context" max_length="1500" name="additional_context" type="string"/>
+        <element label="Observable Type" max_length="150" name="observable_type" type="string"/>
+        <element label="Observable Value" max_length="400" name="observable_value" type="string"/>
+        <element label="Observable ID" max_length="100" name="observable_id" type="string"/>
+    </element>
+</database>

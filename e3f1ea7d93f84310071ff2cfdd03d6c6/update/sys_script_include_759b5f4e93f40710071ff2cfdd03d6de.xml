@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_1893179_tisc_i_0.TISCObservableEnrichment</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>TISCObservableEnrichment</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var TISCObservableEnrichment = Class.create();
+TISCObservableEnrichment.prototype = {
+    initialize: function() {},
+
+    enrichObservables: function(configSysId) {
+
+        var configGR = new GlideRecord(
+            'x_1893179_tisc_i_0_inbound_configurations'
+        );
+
+        if (!configGR.get(configSysId)) {
+
+            gs.error(
+                '[ThreatServer] Enrichment configuration not found'
+            );
+
+            return;
+        }
+
+        var processGR = new GlideRecord(
+            'x_1893179_tisc_i_0_process_monitor'
+        );
+
+        processGR.initialize();
+
+        processGR.status = 'in_progress';
+        processGR.operation = 'inbound';
+        processGR.operation_category =
+            'enrich_observables';
+
+        processGR.configuration =
+            configGR.getUniqueValue();
+
+        var startGdt = new GlideDateTime();
+
+        processGR.start_time = startGdt;
+
+        processGR.message =
+            '[' + startGdt.getDisplayValue() + '] ' +
+            'Observable enrichment started\n';
+
+        var processSysId = processGR.insert();
+
+        try {
+
+            var result =
+                this._fetchEnrichments(processSysId);
+
+            var completionGdt =
+                new GlideDateTime();
+
+            processGR.get(processSysId);
+
+            processGR.status = 'complete';
+
+            processGR.end_time =
+                completionGdt;
+
+            processGR.message +=
+
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                result.inserted +
+                ' enrichments inserted into staging\n' +
+
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                result.skipped +
+                ' enrichments skipped\n' +
+
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                result.promoted +
+                ' enrichments promoted\n' +
+
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                result.failed +
+                ' enrichments failed\n' +
+
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                'Observable enrichment completed';
+
+            processGR.update();
+
+            configGR.last_successful_run =
+                completionGdt;
+
+            configGR.update();
+
+        } catch (ex) {
+
+            this._failProcess(
+                processSysId,
+                ex.message
+            );
+        }
+    },
+
+    _fetchEnrichments: function(processSysId) {
+
+        var result = {
+            inserted: 0,
+            skipped: 0,
+            promoted: 0,
+            failed: 0
+        };
+
+        var observableGR = new GlideRecord(
+            'x_1893179_tisc_i_0_observable_staging'
+        );
+
+        observableGR.addQuery(
+            'processed',
+            true
+        );
+
+        observableGR.query();
+
+        while (observableGR.next()) {
+
+            try {
+
+                var existingEnrichment =
+                    new GlideRecord(
+                        'x_1893179_tisc_i_0_observable_enrichment'
+                    );
+
+                existingEnrichment.addQuery(
+                    'observable_id',
+                    observableGR.observable_id
+                );
+
+                existingEnrichment.query();
+
+                if (existingEnrichment.next()) {
+
+                    result.skipped++;
+
+                    continue;
+                }
+
+                var rm = new sn_ws.RESTMessageV2(
+                    'ThreatServer-Enrichment',
+                    'Fetch Enrichment'
+                );
+
+                rm.setStringParameterNoEscape(
+                    'observable_id',
+                    observableGR.observable_id + ''
+                );
+
+                var response = rm.execute();
+
+                var status =
+                    response.getStatusCode();
+
+                if (status != 200) {
+
+                    result.failed++;
+
+                    continue;
+                }
+
+                var body =
+                    JSON.parse(response.getBody());
+
+                var enrichment =
+                    body.data || {};
+
+                var stageGR = new GlideRecord(
+                    'x_1893179_tisc_i_0_observable_enrichment_staging'
+                );
+
+                stageGR.initialize();
+
+                stageGR.observable_id =
+                    observableGR.observable_id;
+
+                stageGR.observable_value =
+                    observableGR.value;
+
+                stageGR.observable_type =
+                    observableGR.ioc_type;
+
+                stageGR.raw_payload =
+                    JSON.stringify(enrichment);
+
+                stageGR.processed = false;
+
+                stageGR.processing_status =
+                    'pending';
+
+                stageGR.process_monitor =
+                    processSysId;
+
+                stageGR.source =
+                    'ThreatServer';
+
+                stageGR.fetch_time =
+                    new GlideDateTime();
+
+                var stageSysId =
+                    stageGR.insert();
+
+                if (!stageSysId) {
+
+                    result.failed++;
+
+                    continue;
+                }
+
+                result.inserted++;
+
+                var promotionStatus =
+                    this._promoteEnrichment(stageGR);
+
+                if (promotionStatus === 'promoted') {
+
+                    result.promoted++;
+
+                } else {
+
+                    result.failed++;
+                }
+
+            } catch (ex) {
+
+                result.failed++;
+            }
+        }
+
+        return result;
+    },
+
+    _promoteEnrichment: function(stageGR) {
+
+        try {
+
+            var payload =
+                JSON.parse(stageGR.raw_payload);
+
+            var enrichmentGR =
+                new GlideRecord(
+                    'x_1893179_tisc_i_0_observable_enrichment'
+                );
+
+            enrichmentGR.initialize();
+
+            enrichmentGR.observable_id =
+                stageGR.observable_id;
+
+            enrichmentGR.observable_value =
+                stageGR.observable_value;
+
+            enrichmentGR.observable_type =
+                stageGR.observable_type;
+
+            enrichmentGR.confidence =
+                payload.confidence || 0;
+
+            enrichmentGR.threat_score =
+                payload.threat_score || 0;
+
+            enrichmentGR.threat_level =
+                payload.threat_level || '';
+
+            enrichmentGR.threat_severity =
+                payload.threat_severity || '';
+
+            enrichmentGR.reputation =
+                payload.reputation || '';
+
+            enrichmentGR.criticality =
+                payload.criticality || 0;
+
+            enrichmentGR.malware =
+                payload.malware || '';
+
+            enrichmentGR.malware_printable =
+                payload.malware_printable || '';
+
+            enrichmentGR.first_seen =
+                payload.first_seen || '';
+
+            enrichmentGR.last_seen =
+                payload.last_seen || '';
+
+            enrichmentGR.description =
+                payload.description || '';
+
+            enrichmentGR.additional_context =
+                payload.additional_context || '';
+
+            enrichmentGR.raw_payload =
+                stageGR.raw_payload;
+
+            enrichmentGR.last_enriched =
+                new GlideDateTime();
+
+            if (payload.tags) {
+
+                enrichmentGR.tags =
+                    payload.tags.join(', ');
+            }
+
+            var enrichmentSysId =
+                enrichmentGR.insert();
+
+            if (!enrichmentSysId) {
+
+                this._markEnrichmentFailed(
+                    stageGR,
+                    'Failed to insert enrichment record'
+                );
+
+                return 'failed';
+            }
+
+            this._markEnrichmentProcessed(
+                stageGR
+            );
+
+            return 'promoted';
+
+        } catch (ex) {
+
+            this._markEnrichmentFailed(
+                stageGR,
+                ex.message
+            );
+
+            return 'failed';
+        }
+    },
+
+    _markEnrichmentProcessed: function(stageGR) {
+
+        stageGR.processed = true;
+
+        stageGR.processing_status =
+            'processed';
+
+        stageGR.error_message = '';
+
+        stageGR.update();
+    },
+
+    _markEnrichmentFailed: function(stageGR, msg) {
+
+        stageGR.processed = false;
+
+        stageGR.processing_status =
+            'failed';
+
+        stageGR.error_message =
+            ((msg || '') + '').substring(0, 1000);
+
+        stageGR.update();
+    },
+
+    _failProcess: function(processSysId, msg) {
+
+        var processGR = new GlideRecord(
+            'x_1893179_tisc_i_0_process_monitor'
+        );
+
+        if (processGR.get(processSysId)) {
+
+            var failGdt =
+                new GlideDateTime();
+
+            processGR.status = 'failed';
+
+            processGR.end_time =
+                failGdt;
+
+            processGR.message +=
+
+                '\n[' + failGdt.getDisplayValue() + '] ' +
+                'ERROR: ' +
+                msg;
+
+            processGR.update();
+        }
+
+        gs.error(
+            '[ThreatServer] ' + msg
+        );
+    },
+    type: 'TISCObservableEnrichment'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-13 17:08:25</sys_created_on>
+        <sys_id>759b5f4e93f40710071ff2cfdd03d6de</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>TISCObservableEnrichment</sys_name>
+        <sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
+        <sys_update_name>sys_script_include_759b5f4e93f40710071ff2cfdd03d6de</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-13 18:35:12</sys_updated_on>
+    </sys_script_include>
+</record_update>
