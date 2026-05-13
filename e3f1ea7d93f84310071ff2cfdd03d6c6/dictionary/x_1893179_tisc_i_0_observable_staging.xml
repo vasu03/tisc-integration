@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="b31a34869370c310071ff2cfdd03d636" label="Observable Staging" max_length="40" name="x_1893179_tisc_i_0_observable_staging" type="collection">
+        <element label="Malware Printable" max_length="150" name="malware_printable" type="string"/>
+        <element label="Malware" max_length="150" name="malware" type="string"/>
+        <element label="Process Monitor" max_length="32" name="process_monitor" reference="x_1893179_tisc_i_0_process_monitor" type="reference"/>
+        <element label="Erroe Message" max_length="1000" name="erroe_message" type="string"/>
+        <element label="Value" max_length="500" name="value" type="string"/>
+        <element label="IOC Type" max_length="100" name="ioc_type" type="string"/>
+        <element choice="3" default="pending" label="Processing Status" max_length="255" name="processing_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Processed" sequence="1" value="processed"/>
+                <element inactive_on_update="false" label="Pending" sequence="0" value="pending"/>
+                <element inactive_on_update="false" label="Failed" sequence="2" value="failed"/>
+            </choice>
+        </element>
+        <element label="Source" max_length="150" name="source" type="string"/>
+        <element label="Raw Payload" max_length="10000" name="raw_payload" type="string"/>
+        <element label="Processed" max_length="40" name="processed" type="boolean"/>
+        <element label="Observable ID" max_length="100" name="observable_id" type="string"/>
+        <index name="index">
+            <element name="process_monitor"/>
+        </index>
+    </element>
+</database>

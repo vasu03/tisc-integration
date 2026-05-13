@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_1893179_tisc_i_0.TISCObsrvableIngestion</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>TISCObsrvableIngestion</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var TISCObsrvableIngestion = Class.create();
+TISCObsrvableIngestion.prototype = {
+    initialize: function() {},
+    fetchObservables: function(configSysId) {
+
+        var configGR = new GlideRecord('x_1893179_tisc_i_0_inbound_configurations');
+
+        if (!configGR.get(configSysId)) {
+            gs.error('[ThreatServer] Inbound configuration not found');
+            return;
+        }
+
+        var processGR = new GlideRecord('x_1893179_tisc_i_0_process_monitor');
+        processGR.initialize();
+        processGR.status = 'in_progress';
+        processGR.operation = 'inbound';
+        processGR.operation_category = 'fetch_observables';
+        processGR.configuration = configGR.getUniqueValue();
+        processGR.start_time = gs.nowDateTime();
+        processGR.message = '[' + gs.nowDateTime() + '] ' + 'Observable fetching started\n';
+
+        var processSysId = processGR.insert();
+
+        try {
+
+            var cursor = configGR.next_offset + '';
+
+            var rm = new sn_ws.RESTMessageV2(
+                'ThreatServer-FetchObservables',
+                'Fetch Observables'
+            );
+
+            rm.setStringParameterNoEscape(
+                'cursor',
+                cursor
+            );
+
+            var response = rm.execute();
+
+            var status = response.getStatusCode();
+
+            if (status != 200) {
+
+                this._failProcess(
+                    processSysId,
+                    'REST call failed with status: ' +
+                    status
+                );
+
+                return;
+            }
+
+            var body = JSON.parse(response.getBody());
+
+            var observables =
+                body.data || [];
+
+            var inserted = 0;
+            var skipped = 0;
+
+            for (var i = 0; i < observables.length; i++) {
+
+                var obs = observables[i];
+
+                var existing = new GlideRecord('x_1893179_tisc_i_0_observable_staging');
+                existing.addQuery('observable_id', obs.id);
+                existing.query();
+
+                if (existing.next()) {
+                    skipped++;
+                    continue;
+                }
+
+                var stageGR = new GlideRecord('x_1893179_tisc_i_0_observable_staging');
+                stageGR.initialize();
+                stageGR.observable_id = obs.id;
+                stageGR.value = obs.value;
+                stageGR.ioc_type = obs.type;
+                stageGR.malware = obs.malware;
+                stageGR.malware_printable = obs.malware_printable;
+                stageGR.source = obs.source;
+                stageGR.raw_payload = JSON.stringify(obs);
+                stageGR.processed = false;
+                stageGR.processing_status = 'pending';
+                stageGR.process_monitor = processSysId;
+
+                stageGR.insert();
+                inserted++;
+            }
+
+            configGR.next_offset = body.next_cursor || '';
+            configGR.last_successful_run = gs.nowDateTime();
+            configGR.update();
+
+            processGR.get(processSysId);
+            processGR.status = 'complete';
+            processGR.end_time = gs.nowDateTime();
+            processGR.message += '[' + gs.nowDateTime() + '] ' + inserted +
+                ' observables inserted into staging\n' +
+                '[' + gs.nowDateTime() + '] ' +
+                skipped + ' duplicate observables skipped\n' +
+                '[' + gs.nowDateTime() + '] ' + 'Observable fetching completed';
+
+            processGR.update();
+
+        } catch (ex) {
+
+            this._failProcess(
+                processSysId,
+                ex.message
+            );
+        }
+    },
+
+    _failProcess: function(processSysId, msg) {
+
+        var processGR = new GlideRecord('x_1893179_tisc_i_0_process_monitor');
+        if (processGR.get(processSysId)) {
+            processGR.status = 'failed';
+            processGR.end_time = gs.nowDateTime();
+            processGR.message += '\n[' + gs.nowDateTime() + '] ' + 'ERROR: ' + msg;
+            processGR.update();
+        }
+
+        gs.error('[ThreatServer] ' + msg);
+    },
+
+    type: 'TISCObsrvableIngestion'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-13 05:15:39</sys_created_on>
+        <sys_id>a9d1f8829330c310071ff2cfdd03d6b3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>TISCObsrvableIngestion</sys_name>
+        <sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
+        <sys_update_name>sys_script_include_a9d1f8829330c310071ff2cfdd03d6b3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-13 05:15:39</sys_updated_on>
+    </sys_script_include>
+</record_update>

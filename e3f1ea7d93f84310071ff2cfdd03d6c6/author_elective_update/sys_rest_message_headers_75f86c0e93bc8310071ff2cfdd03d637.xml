@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message_headers">
+    <sys_rest_message_headers action="DELETE">
+        <name>x-api-key</name>
+        <rest_message display_value="">f5a86c4e93bc8310071ff2cfdd03d6d2</rest_message>
+        <sys_class_name>sys_rest_message_headers</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-13 04:06:37</sys_created_on>
+        <sys_id>75f86c0e93bc8310071ff2cfdd03d637</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x-api-key</sys_name>
+        <sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
+        <sys_update_name>sys_rest_message_headers_75f86c0e93bc8310071ff2cfdd03d637</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-13 04:06:37</sys_updated_on>
+        <value/>
+    </sys_rest_message_headers>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</application>
+        <file_path/>
+        <instance_id>a840b6f6ff288f9cc80bf8e4fc4fd998</instance_id>
+        <instance_name>dev397025</instance_name>
+        <name>sys_rest_message_headers_75f86c0e93bc8310071ff2cfdd03d637</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message_headers"><sys_rest_message_headers action="INSERT_OR_UPDATE"><name>x-api-key</name><rest_message display_value="">f5a86c4e93bc8310071ff2cfdd03d6d2</rest_message><sys_class_name>sys_rest_message_headers</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-05-13 04:06:37</sys_created_on><sys_id>75f86c0e93bc8310071ff2cfdd03d637</sys_id><sys_mod_count>0</sys_mod_count><sys_name>x-api-key</sys_name><sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package><sys_policy/><sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope><sys_update_name>sys_rest_message_headers_75f86c0e93bc8310071ff2cfdd03d637</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-05-13 04:06:37</sys_updated_on><value/></sys_rest_message_headers></record_update>]]></payload>
+        <payload_hash>-686993518</payload_hash>
+        <record_name>x-api-key</record_name>
+        <reverted_from/>
+        <source>f70666f5933c4310071ff2cfdd03d66b</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-13 04:06:37</sys_created_on>
+        <sys_id>af09e88e93bc8310071ff2cfdd03d6af</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19e1f83e1e30000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-13 04:06:37</sys_updated_on>
+        <type>HTTP Headers</type>
+        <update_guid>6f09e88e62bc8310dc52557f9616afae</update_guid>
+        <update_guid_history>6f09e88e62bc8310dc52557f9616afae:-686993518</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-13 04:32:07</sys_created_on>
+        <sys_db_object display_value="" name="sys_rest_message_headers">sys_rest_message_headers</sys_db_object>
+        <sys_id>105ecdbb646843c0a47379965a4a9000</sys_id>
+        <sys_metadata>75f86c0e93bc8310071ff2cfdd03d637</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x-api-key</sys_name>
+        <sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
+        <sys_parent display_value="ThreatServer-FetchObservables">f5a86c4e93bc8310071ff2cfdd03d6d2</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
+        <sys_scope_delete display_value="">0b501b6f40ad4451809c855468152f41</sys_scope_delete>
+        <sys_update_name>sys_rest_message_headers_75f86c0e93bc8310071ff2cfdd03d637</sys_update_name>
+        <sys_update_version display_value="sys_rest_message_headers_75f86c0e93bc8310071ff2cfdd03d637">af09e88e93bc8310071ff2cfdd03d6af</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-13 04:32:07</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
