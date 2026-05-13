@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2026-05-13 18:38:13">
+<sysauto_script action="INSERT_OR_UPDATE">
+<active>true</active>
+<advanced>true</advanced>
+<business_calendar display_value=""/>
+<condition/>
+<conditional>false</conditional>
+<entered_run_end/>
+<entered_run_start/>
+<entered_time>1970-01-01 00:00:00</entered_time>
+<max_drift/>
+<name>ThreatServer - Enrich Observables</name>
+<offset/>
+<offset_type>0</offset_type>
+<repeat_every/>
+<run_as display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</run_as>
+<run_as_tz/>
+<run_dayofmonth>1</run_dayofmonth>
+<run_dayofweek>1</run_dayofweek>
+<run_daysofweek/>
+<run_end/>
+<run_month>1</run_month>
+<run_period>1970-01-01 00:05:00</run_period>
+<run_start/>
+<run_time>1970-01-01 08:00:00</run_time>
+<run_type>periodically</run_type>
+<run_weekinmonth>1</run_weekinmonth>
+<script><![CDATA[(function() {
+
+    try {
+
+        var nowGdt = new GlideDateTime();
+
+        var configGR = new GlideRecord(
+            'x_1893179_tisc_i_0_inbound_configurations'
+        );
+
+        configGR.addQuery(
+            'active',
+            true
+        );
+
+        configGR.addQuery(
+            'type',
+            'enrich_observables'
+        );
+
+        var nextRunQuery = configGR.addNullQuery(
+            'next_run'
+        );
+
+        nextRunQuery.addOrCondition(
+            'next_run',
+            '<=',
+            nowGdt
+        );
+
+        configGR.orderBy('next_run');
+
+        configGR.query();
+
+        var triggered = 0;
+
+        if (!configGR.hasNext()) {
+
+            gs.info(
+                '[TISC Enrichment Scheduler] ' +
+                'No due active Enrich Observables configurations found.'
+            );
+
+            return;
+        }
+
+        while (configGR.next()) {
+
+            try {
+
+                gs.info(
+                    '[TISC Enrichment Scheduler] ' +
+                    'Triggering enrichment for config: ' +
+                    configGR.name
+                );
+
+                new x_1893179_tisc_i_0
+                    .TISCObservableEnrichment()
+                    .enrichObservables(
+                        configGR.getUniqueValue()
+                    );
+
+                var nextRunGdt =
+                    new GlideDateTime();
+
+                var frequency =
+                    parseInt(
+                        configGR.import_frequency,
+                        10
+                    );
+
+                if (isNaN(frequency) || frequency < 1) {
+                    frequency = 1;
+                }
+
+                nextRunGdt.addDaysUTC(frequency);
+
+                configGR.next_run =
+                    nextRunGdt;
+
+                configGR.update();
+
+                triggered++;
+
+            } catch (innerEx) {
+
+                gs.error(
+                    '[TISC Enrichment Scheduler] ' +
+                    'Failed for config: ' +
+                    configGR.name +
+                    ' Error: ' +
+                    innerEx.message
+                );
+            }
+        }
+
+        gs.info(
+            '[TISC Enrichment Scheduler] ' +
+            'Triggered ' +
+            triggered +
+            ' enrichment run(s).'
+        );
+
+    } catch (ex) {
+
+        gs.error(
+            '[TISC Enrichment Scheduler] Fatal error: ' +
+            ex.message
+        );
+    }
+
+})();]]></script>
+<sys_class_name>sysauto_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-05-13 18:13:08</sys_created_on>
+<sys_id>a3d92b0693b80710071ff2cfdd03d699</sys_id>
+<sys_mod_count>2</sys_mod_count>
+<sys_name>ThreatServer - Enrich Observables</sys_name>
+<sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
+<sys_policy/>
+<sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
+<sys_update_name>sysauto_script_a3d92b0693b80710071ff2cfdd03d699</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-05-13 18:18:25</sys_updated_on>
+<time_zone>floating</time_zone>
+<upgrade_safe>false</upgrade_safe>
+</sysauto_script>
+</unload>
