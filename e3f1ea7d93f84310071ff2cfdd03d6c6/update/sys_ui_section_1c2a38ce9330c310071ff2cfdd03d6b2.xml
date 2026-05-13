@@ -1,5 +1,173 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update>
     <sys_ui_section caption="" section_id="1c2a38ce9330c310071ff2cfdd03d6b2" sys_domain="global" table="x_1893179_tisc_i_0_observable_staging" version="3" view="">
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>observable_id</element>
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>c4e5b58293b8c310071ff2cfdd03d6c7</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>ioc_type</element>
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>44e5b58293b8c310071ff2cfdd03d6c8</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>processing_status</element>
+            <position>2</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>c0e5b58293b8c310071ff2cfdd03d6c9</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>process_monitor</element>
+            <position>3</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>40e5b58293b8c310071ff2cfdd03d6ca</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>processed</element>
+            <position>4</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>cce5b58293b8c310071ff2cfdd03d6ca</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>erroe_message</element>
+            <position>5</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>4ce5b58293b8c310071ff2cfdd03d6cb</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>.split</element>
+            <position>6</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>c8e5b58293b8c310071ff2cfdd03d6cc</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type>.split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>value</element>
+            <position>7</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>48e5b58293b8c310071ff2cfdd03d6cd</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>malware</element>
+            <position>8</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>c4e5b58293b8c310071ff2cfdd03d6ce</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>malware_printable</element>
+            <position>9</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>44e5b58293b8c310071ff2cfdd03d6cf</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>raw_payload</element>
+            <position>10</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>c0e5b58293b8c310071ff2cfdd03d6d0</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>source</element>
+            <position>11</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-13 09:42:14</sys_created_on>
+            <sys_id>40e5b58293b8c310071ff2cfdd03d6d1</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1893179_tisc_i_0_observable_staging" sys_domain="global" view="Default view">1c2a38ce9330c310071ff2cfdd03d6b2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-13 09:42:14</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
         <sys_ui_section action="INSERT_OR_UPDATE">
             <caption/>
             <header>false</header>

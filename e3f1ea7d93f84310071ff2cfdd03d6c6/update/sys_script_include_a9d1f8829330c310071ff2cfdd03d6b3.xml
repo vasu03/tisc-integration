@@ -27,8 +27,10 @@ TISCObsrvableIngestion.prototype = {
         processGR.operation = 'inbound';
         processGR.operation_category = 'fetch_observables';
         processGR.configuration = configGR.getUniqueValue();
-        processGR.start_time = gs.nowDateTime();
-        processGR.message = '[' + gs.nowDateTime() + '] ' + 'Observable fetching started\n';
+
+        var startGdt = new GlideDateTime();
+        processGR.start_time = startGdt;
+        processGR.message = '[' + startGdt.getDisplayValue() + '] ' + 'Observable fetching started\n';
 
         var processSysId = processGR.insert();
 
@@ -72,6 +74,12 @@ TISCObsrvableIngestion.prototype = {
             for (var i = 0; i < observables.length; i++) {
 
                 var obs = observables[i];
+                var type = ((obs.type || '') + '').toLowerCase().trim();
+
+                if (['ipv4', 'domain', 'url'].indexOf(type) === -1) {
+                    skipped++;
+                    continue;
+                }
 
                 var existing = new GlideRecord('x_1893179_tisc_i_0_observable_staging');
                 existing.addQuery('observable_id', obs.id);
@@ -86,7 +94,7 @@ TISCObsrvableIngestion.prototype = {
                 stageGR.initialize();
                 stageGR.observable_id = obs.id;
                 stageGR.value = obs.value;
-                stageGR.ioc_type = obs.type;
+                stageGR.ioc_type = type;
                 stageGR.malware = obs.malware;
                 stageGR.malware_printable = obs.malware_printable;
                 stageGR.source = obs.source;
@@ -99,18 +107,27 @@ TISCObsrvableIngestion.prototype = {
                 inserted++;
             }
 
+            var completionGdt = new GlideDateTime();
+            var promotionResult = this._promoteStagedObservables(processSysId);
+
             configGR.next_offset = body.next_cursor || '';
-            configGR.last_successful_run = gs.nowDateTime();
+            configGR.last_successful_run = completionGdt;
             configGR.update();
 
             processGR.get(processSysId);
             processGR.status = 'complete';
-            processGR.end_time = gs.nowDateTime();
-            processGR.message += '[' + gs.nowDateTime() + '] ' + inserted +
+            processGR.end_time = completionGdt;
+            processGR.message += '[' + completionGdt.getDisplayValue() + '] ' + inserted +
                 ' observables inserted into staging\n' +
-                '[' + gs.nowDateTime() + '] ' +
+                '[' + completionGdt.getDisplayValue() + '] ' +
                 skipped + ' duplicate observables skipped\n' +
-                '[' + gs.nowDateTime() + '] ' + 'Observable fetching completed';
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                promotionResult.promoted + ' observables promoted to target tables\n' +
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                promotionResult.duplicates + ' observables already existed in target tables\n' +
+                '[' + completionGdt.getDisplayValue() + '] ' +
+                promotionResult.failed + ' observables failed during target promotion\n' +
+                '[' + completionGdt.getDisplayValue() + '] ' + 'Observable fetching completed';
 
             processGR.update();
 
@@ -127,13 +144,183 @@ TISCObsrvableIngestion.prototype = {
 
         var processGR = new GlideRecord('x_1893179_tisc_i_0_process_monitor');
         if (processGR.get(processSysId)) {
+            var failGdt = new GlideDateTime();
             processGR.status = 'failed';
-            processGR.end_time = gs.nowDateTime();
-            processGR.message += '\n[' + gs.nowDateTime() + '] ' + 'ERROR: ' + msg;
+            processGR.end_time = failGdt;
+            processGR.message += '\n[' + failGdt.getDisplayValue() + '] ' + 'ERROR: ' + msg;
             processGR.update();
         }
 
         gs.error('[ThreatServer] ' + msg);
+    },
+
+    _promoteStagedObservables: function(processSysId) {
+
+        var result = {
+            promoted: 0,
+            duplicates: 0,
+            failed: 0
+        };
+
+        var stageGR = new GlideRecord('x_1893179_tisc_i_0_observable_staging');
+        stageGR.addQuery('processed', false);
+        var statusQuery = stageGR.addQuery('processing_status', 'pending');
+        statusQuery.addOrCondition('processing_status', 'failed');
+        stageGR.query();
+
+        while (stageGR.next()) {
+
+            try {
+
+                var promotionStatus = this._promoteSingleObservable(stageGR);
+
+                if (promotionStatus === 'promoted') {
+                    result.promoted++;
+                } else if (promotionStatus === 'duplicate') {
+                    result.duplicates++;
+                } else {
+                    result.failed++;
+                }
+
+            } catch (ex) {
+
+                result.failed++;
+                this._markStageFailed(stageGR, ex.message);
+            }
+        }
+
+        return result;
+    },
+
+    _promoteSingleObservable: function(stageGR) {
+
+        var type = ((stageGR.ioc_type || '') + '').toLowerCase().trim();
+        var targetTable = this._getTargetTableForType(type);
+
+        if (!targetTable) {
+            this._markStageFailed(stageGR, 'Unsupported IOC type: ' + type);
+            return 'failed';
+        }
+
+        var observableValue = ((stageGR.value || '') + '').trim();
+
+        if (!observableValue) {
+            this._markStageFailed(stageGR, 'Observable value is empty');
+            return 'failed';
+        }
+
+        var valueField = this._resolveValueField(targetTable, type);
+
+        if (!valueField) {
+            this._markStageFailed(stageGR, 'No suitable value field found on table ' + targetTable);
+            return 'failed';
+        }
+
+        var existingTarget = new GlideRecord(targetTable);
+        existingTarget.addQuery(valueField, observableValue);
+        existingTarget.query();
+
+        if (existingTarget.next()) {
+            this._markStageProcessed(stageGR);
+            return 'duplicate';
+        }
+
+        var targetGR = new GlideRecord(targetTable);
+        targetGR.initialize();
+        targetGR.setValue(valueField, observableValue);
+
+        if (type === 'ipv4' && targetGR.isValidField('x_1893179_tisc_i_0_port')) {
+            var port = this._extractPort(observableValue);
+            if (port) {
+                targetGR.setValue('x_1893179_tisc_i_0_port', port);
+            }
+        }
+
+        var targetSysId = targetGR.insert();
+
+        if (!targetSysId) {
+            this._markStageFailed(stageGR, 'Insert failed for table ' + targetTable);
+            return 'failed';
+        }
+
+        this._markStageProcessed(stageGR);
+        return 'promoted';
+    },
+
+    _getTargetTableForType: function(type) {
+
+        switch (type) {
+            case 'ipv4':
+                return 'sn_sec_tisc_ipv4_address';
+            case 'domain':
+                return 'sn_sec_tisc_domain_name';
+            case 'url':
+                return 'sn_sec_tisc_url';
+            default:
+                return '';
+        }
+    },
+
+    _resolveValueField: function(targetTable, type) {
+
+        var probeGR = new GlideRecord(targetTable);
+        var candidates = ['value', 'observable', 'indicator', 'name'];
+
+        if (type === 'ipv4') {
+            candidates = ['value', 'ip_address', 'address', 'observable', 'indicator', 'name'];
+        } else if (type === 'domain') {
+            candidates = ['value', 'domain', 'observable', 'indicator', 'name'];
+        } else if (type === 'url') {
+            candidates = ['value', 'url', 'observable', 'indicator', 'name'];
+        }
+
+        for (var i = 0; i < candidates.length; i++) {
+            if (probeGR.isValidField(candidates[i])) {
+                return candidates[i];
+            }
+        }
+
+        return '';
+    },
+
+    _extractPort: function(observableValue) {
+
+        var pieces = (observableValue + '').split(':');
+
+        if (pieces.length < 2) {
+            return '';
+        }
+
+        var lastPart = pieces[pieces.length - 1];
+
+        if (!/^\d+$/.test(lastPart)) {
+            return '';
+        }
+
+        var port = parseInt(lastPart, 10);
+
+        if (isNaN(port) || port < 1 || port > 65535) {
+            return '';
+        }
+
+        return port;
+    },
+
+    _markStageProcessed: function(stageGR) {
+
+        stageGR.processed = true;
+        stageGR.processing_status = 'processed';
+        stageGR.erroe_message = '';
+        stageGR.update();
+    },
+
+    _markStageFailed: function(stageGR, errorMessage) {
+
+        var safeMessage = ((errorMessage || '') + '').substring(0, 1000);
+        stageGR.processed = false;
+        stageGR.processing_status = 'failed';
+        stageGR.erroe_message = safeMessage;
+        stageGR.update();
     },
 
     type: 'TISCObsrvableIngestion'
@@ -142,13 +329,13 @@ TISCObsrvableIngestion.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-05-13 05:15:39</sys_created_on>
         <sys_id>a9d1f8829330c310071ff2cfdd03d6b3</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>TISCObsrvableIngestion</sys_name>
         <sys_package display_value="TISC-Integration" source="x_1893179_tisc_i_0">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="TISC-Integration">e3f1ea7d93f84310071ff2cfdd03d6c6</sys_scope>
         <sys_update_name>sys_script_include_a9d1f8829330c310071ff2cfdd03d6b3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-05-13 05:15:39</sys_updated_on>
+        <sys_updated_on>2026-05-13 09:45:07</sys_updated_on>
     </sys_script_include>
 </record_update>
